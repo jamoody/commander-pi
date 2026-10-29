@@ -1,0 +1,10 @@
+target/
+target-*/
+.build/
+dist/
+*.class
+__pycache__/
+datos/
+forge.profile.properties
+*.log
+.env

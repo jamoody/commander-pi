@@ -1,0 +1,15 @@
+{
+  "neoForge": {
+    "repository": "https://github.com/AdrianLopez98/NeoForge",
+    "commit": "cfd019726d15c9b15c239fe27b0fc902b1780100",
+    "version": "1.0.37",
+    "archiveSHA256": "BD6DE6BD2B533D6057E7DDB08A4C2EDAD7628179333AC8BC1516812CF9319432"
+  },
+  "forge": {
+    "repository": "https://github.com/Card-Forge/forge",
+    "commit": "875333b7b78af0da19bf6f297ecde26484c9f2ec",
+    "archiveSHA256": "8AB7144E6FF20DF77A7379EA28C5EC99396DDD7A87BDA98C107448870DD6B07B"
+  },
+  "acquisition": "GitHub source archives pinned by commit; Git history not downloaded",
+  "status": "Commander baseline compiled and integration-tested on Windows; Pi validation pending"
+}
