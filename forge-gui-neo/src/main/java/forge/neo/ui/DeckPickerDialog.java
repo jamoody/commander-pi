@@ -40,6 +40,7 @@ public class DeckPickerDialog extends VBox {
 
     private final List<Deck> mine;
     private final List<Deck> stock;
+    private List<Deck> net = List.of();
     private final double tileWidth;
     private final Consumer<Deck> onPicked;
 
@@ -340,6 +341,17 @@ public class DeckPickerDialog extends VBox {
         return b;
     }
 
+    /** Offer downloaded decks for explicit selection, just like the home screen. */
+    public void setNetDecks(final List<Deck> decks) {
+        if (decks == null || decks.isEmpty()) {
+            return;
+        }
+        net = decks;
+        final Button t = tab(NeoText.get("home.tab.net", net.size()), net);
+        t.setId("picker-net-decks");
+        tabBar.getChildren().add(tabBar.getChildren().indexOf(tabStock) + 1, t);
+    }
+
     /**
      * Una pestanya por coleccion, entre "Mis mazos" y "Los de Forge", como en
      * la pantalla de mazos. Pedido por Ana el 29-09-2026: con "al azar de una
@@ -393,7 +405,7 @@ public class DeckPickerDialog extends VBox {
             // La papelera, solo en los tuyos: los de Forge no se pueden borrar
             // y quien monta este dialogo decide si aqui pinta algo (en el
             // selector del mazo de un rival, no).
-            if (onDelete != null && showing != stock) {
+            if (onDelete != null && showing != stock && showing != net) {
                 tile.setOnDelete(() -> onDelete.accept(deck));
             }
             tiles.add(tile);

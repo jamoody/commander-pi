@@ -52,3 +52,7 @@ java -cp ".build/checks;<package>/app/*" forge.deck.ArchidektImportCheck
 ```
 
 The 16 offline regression cases require no network or card database. The check can also take an Archidekt API JSON snapshot path and an output text path as two additional arguments. A local snapshot of the reported deck verified 99 main-deck cards plus one commander after the fix; the old importer dropped five cards and moved eight more to Sideboard. Personal deck snapshots are not committed.
+
+## Opponent net-deck selection
+
+The opponent deck picker offers a From the net tab when downloaded decks are available. It uses the existing search, pagination, and selection callback; default random-pool behavior is unchanged. `verification/NetDeckPickerCheck.java` exercises the real HomeScreen picker with 45 fixture net decks, including page two, filtering, exact opponent assignment, saved selection, match handoff, Forge tab access, and empty-cache behavior. Run with a disposable `neo.dataDir` and a screenshot path, against the packaged app and assets.
