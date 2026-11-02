@@ -939,13 +939,8 @@ public class SettingsPanel extends VBox {
                     forge.neo.discord.DiscordRich.setEnabled(on);
                 }));
 
-        getChildren().add(section(NeoText.get("settings.replays")));
-        getChildren().add(toggleRow(NeoText.get("settings.replays.on"),
-                NeoSettings.recordReplays(),
-                on -> {
-                    NeoSettings.setBool(NeoSettings.RECORD_REPLAYS, on);
-                    NeoSettings.save();
-                }));
+        
+        
 
         getChildren().add(section(NeoText.get("settings.update")));
         getChildren().add(toggleRow(NeoText.get("settings.update.on"),

@@ -2697,14 +2697,7 @@
 }
 
 /* "● REC" en la mesa mientras se graba una macro */
-.macro-badge {
-    -fx-font-size: 0.9em;
-    -fx-font-weight: bold;
-    -fx-text-fill: #FFFFFF;
-    -fx-background-color: rgba(217, 83, 79, 0.92);
-    -fx-background-radius: 10;
-    -fx-padding: 3 10;
-}
+
 
 /* "ELIGIENDO COMANDANTE", al lado del titulo del catalogo mientras dura el modo */
 .picking-commander-badge {
@@ -2775,12 +2768,7 @@
 
 /* Grabar / repetir macro, encima del registro. Grabando, en rojo: como el
    "● REC", tiene que verse que todo lo que haces se esta apuntando. */
-.macro-button:recording {
-    -fx-opacity: 1;
-    -fx-text-fill: #FFFFFF;
-    -fx-background-color: rgba(217, 83, 79, 0.92);
-    -fx-border-color: transparent;
-}
+
 
 /* El registro completo */
 .game-log .log-line {

@@ -68,7 +68,7 @@ public class HomeScreen extends javafx.scene.layout.StackPane {
          * @param teams         el equipo de cada asiento, el tuyo primero, o
          *                      null si es todos contra todos (ver NeoTeams)
          */
-        void start(Deck deck, int opponents, String aiProfile, boolean watch,
+        void start(Deck deck, int opponents, String aiProfile,
                    List<Deck> opponentDecks, int[] teams);
     }
 
@@ -1489,11 +1489,7 @@ et}) y no se tocan.
         HBox.setHgrow(options, Priority.ALWAYS);
 
         unshrinkable(play).getStyleClass().addAll("btn-primary", "btn-play");
-        play.setOnAction(e -> launch(onStart, false));
-
-        final Button watch = new Button(NeoText.get("home.watch"));
-        unshrinkable(watch).getStyleClass().add("btn-secondary");
-        watch.setOnAction(e -> launch(onStart, true));
+        play.setOnAction(e -> launch(onStart));
 
         final Region gap = new Region();
         HBox.setHgrow(gap, Priority.ALWAYS);
@@ -1502,7 +1498,7 @@ et}) y no se tocan.
         unshrinkable(back).getStyleClass().add("btn-secondary");
         back.setOnAction(e -> onBack.run());
 
-        final HBox row = new HBox(20, options, gap, back, watch, play);
+        final HBox row = new HBox(20, options, gap, back, play);
         row.setAlignment(Pos.CENTER_LEFT);
 
         opponentRow = opponentRow();
@@ -2023,7 +2019,7 @@ et}) y no se tocan.
      * fichero de ajustes refleja siempre con que se jugo la ultima vez, aunque
      * el jugador no cambiara nada.
      */
-    private void launch(final StartHandler onStart, final boolean watch) {
+    private void launch(final StartHandler onStart) {
         // Todos en el mismo equipo: JUGAR ya esta apagado (updateSummary), pero
         // VER no, y con un solo equipo el motor da la partida por acabada
         // antes de empezar.
@@ -2041,7 +2037,7 @@ et}) y no se tocan.
             NeoSettings.setTeams(format, forge.neo.match.NeoTeams.toSetting(teams));
             NeoSettings.save();
             System.out.println("[home] mazo al azar de " + randomPoolName() + ": " + drawn.getName());
-            onStart.start(drawn, opponents, aiProfile, watch, resolvedOpponentDecks(),
+            onStart.start(drawn, opponents, aiProfile, resolvedOpponentDecks(),
                     hasTeams() ? teams.clone() : null);
             return;
         }
@@ -2053,7 +2049,7 @@ et}) y no se tocan.
         NeoSettings.set(NeoSettings.AI_PROFILE, aiProfile);
         NeoSettings.setTeams(format, forge.neo.match.NeoTeams.toSetting(teams));
         NeoSettings.save();
-        onStart.start(effectiveDeck(), opponents, aiProfile, watch, resolvedOpponentDecks(),
+        onStart.start(effectiveDeck(), opponents, aiProfile, resolvedOpponentDecks(),
                 hasTeams() ? teams.clone() : null);
     }
 

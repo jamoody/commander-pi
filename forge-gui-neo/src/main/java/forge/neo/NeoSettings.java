@@ -679,17 +679,10 @@ public final class NeoSettings {
      */
     public static final String UPDATE_CHECK = "updateCheck";
 
-    /**
-     * Grabar tus partidas para volver a verlas (Forge #12255, 16-10-2026).
-     * Encendido de fabrica, como en Forge; se pasa al motor en
-     * {@code NeoGame.applyEnginePrefs}, solo en memoria. Las repeticiones se
-     * ven desde el menu ({@code ReplaysScreen}); Forge guarda las 20 ultimas.
-     */
-    public static final String RECORD_REPLAYS = "recordReplays";
+    
+    
 
-    public static boolean recordReplays() {
-        return getBool(RECORD_REPLAYS, true);
-    }
+    
 
     public static boolean updateCheck() {
         return getBool(UPDATE_CHECK, true);

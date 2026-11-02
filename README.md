@@ -4,7 +4,7 @@ A Commander-only adaptation of [Neo Forge](https://github.com/AdrianLopez98/NeoF
 
 ## Current baseline
 
-The main menu contains Commander, Card Encyclopedia, and Customize. Non-Commander mode controllers and screens have been removed. Shared rules, card scripts, deck tools, settings, replays, and match controls remain. The application no longer depends on Forge's Adventure/mobile engine. ChatGPT opponent integration is not implemented.
+The main menu contains Commander, Card Encyclopedia, and Customize. Non-Commander mode controllers and screens have been removed. Shared rules, card scripts, deck tools, settings, and match controls remain. The application no longer depends on Forge's Adventure/mobile engine. ChatGPT opponent integration is not implemented.
 
 The baseline compiled successfully with JDK 17 and Maven 3.9. A separate integration check completed a four-player Commander game on turn 39 and checked 40 starting life, commander registration, preconstructed decks, encyclopedia loading, and deck storage. GUI checks covered the menu, encyclopedia, customization, and game table. This is not a claim that the upstream Maven test suite passed. The engine logged recoverable AI fallback warnings; ongoing real-play testing is needed. No measured performance comparison or Pi test has been completed.
 
@@ -56,3 +56,11 @@ The 16 offline regression cases require no network or card database. The check c
 ## Opponent net-deck selection
 
 The opponent deck picker offers a From the net tab when downloaded decks are available. It uses the existing search, pagination, and selection callback; default random-pool behavior is unchanged. `verification/NetDeckPickerCheck.java` exercises the real HomeScreen picker with 45 fixture net decks, including page two, filtering, exact opponent assignment, saved selection, match handoff, Forge tab access, and empty-cache behavior. Run with a disposable `neo.dataDir` and a screenshot path, against the packaged app and assets.
+
+## Removed spectator and recording features
+
+AI spectating, saved game replay/recording, and action macro recording/playback have been removed from the Neo application, including screens, startup routes, controls, shortcuts, settings and dedicated translations/styles. The game log remains available. The shared Forge interfaces remain compatible; match startup forces replay recording off before HostedMatch can attach a recorder, regardless of older settings. Existing replay files are not deleted.
+
+A clean Maven package build passed. The packaged JAR no longer contains ReplaysScreen, ReplayText or MacroChoices. `verification/HumanCommanderCheck.java` verifies a real human plus three AI seats, 40 starting life, keeping an opening hand, reaching normal play and conceding back to the menu. It deliberately starts with the engine recording preference enabled and checks that match startup disables it. Use a disposable profile and pass a screenshot path. The net-deck picker integration check was rerun after narrowing HomeScreen's start callback. Menu, deck-selection and live-table screenshots were inspected. This pass did not rerun a full game to a natural winner; the earlier turn-39 result describes the initial baseline.
+
+The developer-only AUTO_PLAY test driver still exercises a human seat programmatically; the spectator mode and its CLI command have been removed. Core engine recording/macro interfaces shared with Forge are retained, with no user-facing entry point in this application.

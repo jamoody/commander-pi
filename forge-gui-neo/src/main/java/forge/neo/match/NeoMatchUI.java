@@ -61,7 +61,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
 
     public enum Mode {
         
-        OBSERVE,
+
         
         AUTO_PLAY,
         
@@ -97,7 +97,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
         
         NET,
         
-        REPLAY
+
     }
 
     private volatile Ending ending = Ending.NORMAL;
@@ -139,11 +139,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
 
     public void leaveMatch(final Exit action) {
         this.exitAction = action;
-        if (isReplay()) {
-
-            forge.gamemodes.net.client.ReplayPlayer.stopFor(this, true);
-            return;
-        }
+        
 
         uiRunLater(() -> table.forgetEngineDialogs());
         watchdogForLeaving();
@@ -936,15 +932,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
         ResolveAll.mirrorOff(getGameController(), update);
     }
 
-    @Override
-    public void applyMacroState(final forge.interfaces.IMacroSystem.State state) {
-        super.applyMacroState(state);
-        runOnUi(() -> {
-            if (table != null) {
-                table.setMacroState(isMacroRecording(), hasMacro());
-            }
-        });
-    }
+    
 
     public static boolean resolvingStack(final IGameController gc) {
         return ResolveAll.isOn(gc);
@@ -1020,125 +1008,22 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
         }
     }
 
-    public Boolean toggleMacroRecording() {
-        if (!interactive() || finished.get()) {
-            return null;
-        }
-        final IGameController gc = getGameController();
-        if (gc == null || gc.macros() == null) {
-            return null;
-        }
-        final boolean willRecord = !gc.macros().isRecording();
-        if (willRecord) {
-            macroChoices.clear();
-        }
-        respondLater(() -> {
-            if (willRecord) {
-                holdAutoPassForMacro(gc);
-            }
-            gc.macros().setRememberedActions();
-            syncMacroAutoPass(gc);
-        });
-        return willRecord;
-    }
+    
 
-    public boolean playMacro() {
-        if (!interactive() || finished.get()) {
-            return false;
-        }
-        final IGameController gc = getGameController();
-        if (gc == null || gc.macros() == null) {
-            return false;
-        }
-        macroChoices.rewind();
-        respondLater(() -> {
-            holdAutoPassForMacro(gc);
-            gc.macros().repeatRememberedActions();
-            syncMacroAutoPass(gc);
-        });
-        return true;
-    }
+    
 
-    private final MacroChoices macroChoices = new MacroChoices();
+    
 
-    private int macroMode() {
-        try {
-            final IGameController gc = getGameController();
-            if (gc == null || gc.macros() == null) {
-                return 0;
-            }
-            if (gc.macros().isReplaying()) {
-                return 2;
-            }
-            return gc.macros().isRecording() ? 1 : 0;
-        } catch (final RuntimeException e) {
-            return 0;
-        }
-    }
+    
 
-    public boolean nextMacroAction() {
-        if (!interactive() || finished.get()) {
-            return false;
-        }
-        final IGameController gc = getGameController();
-        if (gc == null || gc.macros() == null) {
-            return false;
-        }
-        respondLater(() -> {
-            holdAutoPassForMacro(gc);
-            gc.macros().nextRememberedAction();
-            syncMacroAutoPass(gc);
-        });
-        return true;
-    }
+    
 
-    void holdAutoPassForMacro(final IGameController ui) {
-        final IGameController gc = seated(ui);
-        final YieldController y = gc.getYieldController();
-        if (y == null || macroAutoPassSaved != null) {
-            return;
-        }
+    
 
-        for (final FPref scope : MACRO_SCOPES) {
-            macroScopesSaved.put(scope, y.getStringPref(scope));
-            y.setPref(scope, "NEVER");
-        }
-        macroAutoPassSaved = y.getStringPref(FPref.YIELD_AUTO_PASS_NO_ACTIONS);
-        y.setPref(FPref.YIELD_AUTO_PASS_NO_ACTIONS, "false");
-        gc.setYieldPref(FPref.YIELD_AUTO_PASS_NO_ACTIONS, "false");
-    }
+    
+    
 
-    private static final FPref[] MACRO_SCOPES = {
-            FPref.YIELD_DECLINE_SCOPE_STACK_YIELD, FPref.YIELD_DECLINE_SCOPE_NO_ACTIONS};
-    private final java.util.Map<FPref, String> macroScopesSaved =
-            new java.util.concurrent.ConcurrentHashMap<>();
-
-    void syncMacroAutoPass(final IGameController gc) {
-        if (gc == null || gc.macros() == null) {
-            return;
-        }
-        if (gc.macros().isRecording() || gc.macros().isReplaying()) {
-            
-            holdAutoPassForMacro(gc);
-            return;
-        }
-        final String saved = macroAutoPassSaved;
-        if (saved == null) {
-            return;
-        }
-        macroAutoPassSaved = null;
-        final IGameController engine = seated(gc);
-        final YieldController y = engine.getYieldController();
-        if (y == null) {
-            macroScopesSaved.clear();
-            return;
-        }
-        macroScopesSaved.forEach(y::setPref);
-        macroScopesSaved.clear();
-        y.setPref(FPref.YIELD_AUTO_PASS_NO_ACTIONS, saved);
-
-        engine.setYieldPref(FPref.YIELD_AUTO_PASS_NO_ACTIONS, saved);
-    }
+    
 
     static IGameController seated(final IGameController gc) {
         if (gc instanceof forge.player.PlayerControllerHuman human && human.getPlayer() != null
@@ -1149,14 +1034,11 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
         return gc;
     }
 
-    private volatile String macroAutoPassSaved;
+    
 
-    public boolean isMacroRecording() {
-        final IGameController gc = getGameController();
-        return gc != null && gc.macros() != null && gc.macros().isRecording();
-    }
+    
 
-    private boolean macroButtonsOverride;
+    
 
     private volatile java.util.function.BooleanSupplier autoPlayHold;
 
@@ -1256,13 +1138,6 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
             return null;
         }
         final FPref pref = FPref.YIELD_AUTO_PASS_NO_ACTIONS;
-
-        final String saved = macroAutoPassSaved;
-        if (saved != null) {
-            final boolean wasOn = Boolean.parseBoolean(saved);
-            macroAutoPassSaved = String.valueOf(!wasOn);
-            return wasOn;
-        }
 
         final boolean on = gc.getYieldController().getBoolPref(pref);
         final String autoPass = String.valueOf(!on);
@@ -2100,7 +1975,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
 
         final String text = String.join(System.lineSeparator(), news);
 
-        if (forge.neo.NeoSettings.getInt(forge.neo.NeoSettings.NEWS_STYLE, 0) == 0 || isReplay()) {
+        if (forge.neo.NeoSettings.getInt(forge.neo.NeoSettings.NEWS_STYLE, 0) == 0) {
             final forge.neo.ui.TableScreen t = table;
             uiRunLater(() -> t.showNotice(text));
             return false;
@@ -2312,43 +2187,21 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
             }
         });
 
-        if (!isReplay()) {
+        {
             table.enableTurnStats(() -> TurnStats.read(this, localPlayer()));
         }
         
-        table.getMacroRecordButton().setOnAction(e -> pressMacroRecord());
         
-        table.getMacroRecordButton().setVisible(!isReplay());
-        table.getMacroPlayButton().setOnAction(e -> pressMacroPlay());
+        
+        
+        
     }
 
-    public boolean pressMacroRecord() {
-        if (table == null || isReplay() || table.isModalShowing()) {
-            return false;
-        }
-        final Boolean recording = toggleMacroRecording();
-        if (recording == null) {
-            return false;
-        }
+    
 
-        table.setMacroState(recording, !recording || hasMacro());
-        table.getActionBar().setWarning(forge.neo.NeoText.get(recording
-                ? "macro.recording" : "macro.stopped"), false);
-        return true;
-    }
+    
 
-    public boolean pressMacroPlay() {
-        if (table == null || isReplay() || table.isModalShowing() || !playMacro()) {
-            return false;
-        }
-        table.setMacroRecording(false);
-        return true;
-    }
-
-    public boolean hasMacro() {
-        final IGameController gc = getGameController();
-        return gc != null && gc.macros() != null && gc.macros().hasRememberedActions();
-    }
+    
 
     private PlayerView localPlayer() {
         
@@ -2740,7 +2593,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
     public void openView(final TrackableCollection<PlayerView> myPlayers) {
         OPENED_VIEWS.incrementAndGet();
 
-        if (ending != Ending.REPLAY && getGameView() != null) {
+        if (getGameView() != null) {
             GameStats.attach(getGameView().getGame());
             
             HandLog.attach(getGameView().getGame());
@@ -2748,7 +2601,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
 
         forge.neo.card.AffectedBy.setGame(getGameView() == null ? null : getGameView().getGame());
 
-        if (ending != Ending.REPLAY && getGameView() != null) {
+        if (getGameView() != null) {
             CircledColors.watch(getGameView().getGame());
         }
 
@@ -2757,7 +2610,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
         }
         if (mode == Mode.HUMAN) {
 
-            if (ending != Ending.REPLAY) {
+            {
                 NeoGame.applyEnginePrefs();
                 detail = DetailLog.start(getGameView());
             }
@@ -2777,8 +2630,8 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
         finished.set(false);
         closeNotified.set(false);
 
-        macroAutoPassSaved = null;
-        macroScopesSaved.clear();
+        
+        
 
         uiRunLater(() -> table.forgetEngineDialogs());
         gameOverShowing = false;
@@ -2929,7 +2782,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
             System.out.println("[red] afterGameEnd: primero=" + first + " pantalla final=" + gameOverShowing
                     + " finishGame=" + finishGameCalled);
         }
-        if (first && (ending == Ending.NET || ending == Ending.REPLAY) && gameOverShowing) {
+        if (first && (ending == Ending.NET) && gameOverShowing) {
 
             closeDeferred = true;
             return;
@@ -2994,7 +2847,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
             return;
         }
 
-        if (mode != Mode.OBSERVE) {
+        {
 
             final GameView now = getGameView();
 
@@ -3026,7 +2879,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
                         : gv.getWinningPlayerName();
         final int turns = gv == null ? 0 : gv.getTurn();
 
-        final boolean matchOver = ending == Ending.NET || ending == Ending.REPLAY
+        final boolean matchOver = ending == Ending.NET
                 || gv == null || gv.isMatchOver();
         final int totalGames = gv == null ? 0 : gv.getNumGamesInMatch();
 
@@ -3184,35 +3037,12 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
         return false;
     }
 
-    private void replayButtons(final String okLabel, final String cancelLabel,
-                               final boolean okEnabled, final boolean cancelEnabled) {
-        final UiDispatcher ui = uiDispatcher();
-        if (ui == null) {
-            return;
-        }
-        final boolean showCancel = cancelLabel != null && !cancelLabel.isBlank();
-        ui.runLater(() -> {
-            table.getActionBar().setButtons(ReplayText.label(okLabel),
-                    showCancel ? ReplayText.label(cancelLabel) : " ", okEnabled, cancelEnabled && showCancel);
-            table.getActionBar().setPlayerChoices(null);
-            table.getActionBar().setResolveAll(null, null, null);
-            table.getMacroRecordButton().setVisible(false);
-            table.getActionBar().setOnOk(() -> respondLater(() -> getGameController().selectButtonOk()));
-            table.getActionBar().setOnCancel(() -> respondLater(() -> getGameController().selectButtonCancel()));
-        });
-    }
+    
 
     @Override
     public void showPromptMessage(final PlayerView playerView, final String message, final CardView card) {
         trace("prompt[%s]: %s", nameOf(playerView), message);
-        if (isReplay()) {
-
-            final TableBinder rb = binder;
-            if (rb != null) {
-                rb.setPrompt(ReplayText.prompt(message));
-            }
-            return;
-        }
+        
         cancelStaleAwaitIfGuest();
 
         if (isStaleAttackPrompt(message)) {
@@ -3817,10 +3647,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
     @Override
     public void updateButtons(final PlayerView owner, final String okLabel, final String cancelLabel,
                               final boolean okEnabled, final boolean cancelEnabled, final boolean focusOk) {
-        if (isReplay()) {
-            replayButtons(okLabel, cancelLabel, okEnabled, cancelEnabled);
-            return;
-        }
+        
         if (Boolean.getBoolean("neo.trace.choices")) {
             System.out.println("[botones] " + okLabel + "/" + cancelLabel + " " + okEnabled + "/" + cancelEnabled
                     + " de " + (owner == null ? "?" : owner.getName() + "#" + owner.getId()));
@@ -3884,24 +3711,6 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
             }
         }
 
-        final IGameController macroGc = getGameController();
-        
-        if (macroAutoPassSaved != null && macroGc != null && macroGc.macros() != null
-                && !macroGc.macros().isRecording() && !macroGc.macros().isReplaying()) {
-            respondLater(() -> syncMacroAutoPass(macroGc));
-        }
-        if (!macroButtonsOverride && macroGc != null && macroGc.macros() != null
-                && macroGc.macros().isReplaying()) {
-            macroButtonsOverride = true;
-            try {
-                updateButtons(owner, "", forge.util.Localizer.getInstance().getMessage("lblCancel"),
-                        false, true, false);
-            } finally {
-                macroButtonsOverride = false;
-            }
-            return;
-        }
-        
         askGen.incrementAndGet();
 
         pushToTable();
@@ -3958,72 +3767,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
 
             final UiDispatcher ui = uiDispatcher();
             if (ui != null) {
-                ui.runLater(() -> {
-                    table.getActionBar().setButtons(shownOk, cancelLabel, okEnabled, cancelEnabled);
-                    table.getActionBar().setPlayerChoices(playerChoices);
-                    table.getActionBar().setResolveAll(resolveAll > 0
-                                    ? NeoText.get("stack.resolveAll", resolveAll) : null,
-                            NeoText.get("stack.resolveAll.tip"), this::resolveStack);
-                    table.getActionBar().setYesToAll(yesToAll > 0
-                                    ? NeoText.get("trigger.yesToAll", yesToAll) : null,
-                            NeoText.get("trigger.yesToAll.tip"), this::yesToAll);
-                    table.getActionBar().setOnOk(() -> {
-
-                        if (okAwaitingEngine()) {
-
-                            if (Boolean.getBoolean("neo.okhold.debug")) {
-                                System.out.println("[okhold] OK ignorado, el motor aun no ha vuelto"
-                                        + " a preguntar | stack vacio en la vista: " + (topOfStack() == null));
-                            }
-                            return;
-                        }
-                        
-                        if (warnNothingPicked()) {
-                            return;
-                        }
-                        
-                        if (confirmLeavingMain()) {
-                            return;
-                        }
-                        
-                        if (confirmNoBlockers()) {
-                            return;
-                        }
-                        
-                        if (confirmAutoSacrifice()) {
-                            return;
-                        }
-
-                        if (!payingMana && !isSelecting() && getSelectionMax() <= 0
-                                && isRoutinePriorityPrompt(lastPrompt)) {
-                            okSentAtGen = askGen.get();
-                            okSentAt = System.currentTimeMillis();
-                        }
-                        didDetail("pressed OK (" + shownOk + ")");
-                        respondLater(() -> getGameController().selectButtonOk());
-                    });
-                    table.getActionBar().setOnCancel(() -> {
-                        
-                        if (isEndTurnLabel(cancelLabel) && confirmEndingTurn(() -> {
-                            didDetail("pressed Cancel (" + cancelLabel + "), confirmed");
-                            respondLater(() -> getGameController().selectButtonCancel());
-                        })) {
-                            return;
-                        }
-                        didDetail("pressed Cancel (" + cancelLabel + ")");
-                        respondLater(() -> getGameController().selectButtonCancel());
-                    });
-
-                    showCentralPrompt(shownOk, cancelLabel, okEnabled, cancelEnabled);
-                    table.requestLayout();
-
-                    table.setGroupingEnabled(!isSelecting());
-                    table.setSelectable(this::isSelectable);
-
-                    table.setPlayersSelectable(true);
-
-                    table.setMacroState(isMacroRecording(), hasMacro());
-                });
+                
             }
             return;
         }
@@ -4861,26 +4605,6 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
         final int lo = reveal ? -1 : Math.max(0, Math.min(min, options.size()));
         final int hi = reveal ? -1 : Math.max(lo, Math.min(max, options.size()));
 
-        final int macro = reveal ? 0 : macroMode();
-        final List<String> macroLabels = new ArrayList<>();
-        if (macro != 0) {
-            for (final T o : options) {
-                macroLabels.add(display == null ? defaultLabel(o) : display.apply(o));
-            }
-        }
-        if (macro == 2) {
-            final List<String> want = macroChoices.replay("choice", title, macroLabels);
-            final List<Integer> at = want == null ? null : MacroChoices.indicesOf(macroLabels, want);
-            if (at != null && at.size() >= lo && at.size() <= hi) {
-                final List<T> out = new ArrayList<>();
-                for (final int i : at) {
-                    out.add(options.get(i));
-                }
-                trace("macro: '%s' -> %s", title, want);
-                return out;
-            }
-        }
-
         final List<T> picked = askUser(reply -> {
             final ChoiceDialog<T> dialog = new ChoiceDialog<>(
                     title, options, lo, hi,
@@ -4924,13 +4648,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
             detailLog.asked(title + (reveal ? " (shown, nothing to pick)" : " (pick " + lo + "-" + hi + ")"),
                     shown, picked == null ? null : chosen.isEmpty() ? "(none)" : String.join(" | ", chosen));
         }
-        if (macro == 1 && picked != null) {
-            final List<String> chosenLabels = new ArrayList<>();
-            for (final T o : picked) {
-                chosenLabels.add(display == null ? defaultLabel(o) : display.apply(o));
-            }
-            macroChoices.record("choice", title, macroLabels, chosenLabels);
-        }
+        
         if (picked != null) {
             return picked;
         }
@@ -5416,22 +5134,6 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
                 return choices.get(grouped[0]);
             }
 
-            final int macro = macroMode();
-            final String hostName = hostCard == null || hostCard.getCurrentState() == null
-                    ? "" : hostCard.getCurrentState().getName();
-            final List<String> abilityLabels = new ArrayList<>();
-            for (final SpellAbilityView sa : choices) {
-                abilityLabels.add(sa == null ? "" : String.valueOf(sa.getDescription()));
-            }
-            if (macro == 2) {
-                final List<String> want = macroChoices.replayInOrder("ability", hostName, abilityLabels);
-                final List<Integer> at = want == null ? null : MacroChoices.indicesOf(abilityLabels, want);
-                if (at != null && at.size() == 1 && choices.get(at.get(0)).canPlay()) {
-                    trace("macro: habilidad de %s -> %s", hostName, want);
-                    return choices.get(at.get(0));
-                }
-            }
-
             pendingAuraTarget = null;
             final Integer picked = askUser(reply -> {
                 final AbilityMenu menu = new AbilityMenu(
@@ -5442,10 +5144,7 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
             if (picked == null || picked < 0 || picked >= choices.size()) {
                 return null;
             }
-            if (macro == 1) {
-                macroChoices.record("ability", hostName, abilityLabels,
-                        java.util.List.of(abilityLabels.get(picked)));
-            }
+            
             return choices.get(picked);
         }
         return (choices == null || choices.isEmpty()) ? null : choices.get(0);

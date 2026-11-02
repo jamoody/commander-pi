@@ -132,7 +132,7 @@ public final class CostConfirm {
         public boolean confirmPayment(final CostPart costPart, final String question, final SpellAbility sa) {
             final NeoMatchUI ui = NeoMatchUI.of(getGui());
             final CardView card = sa == null ? null : sa.getCardView();
-            if (ui == null || card == null || question == null || macros().isReplaying()) {
+            if (ui == null || card == null || question == null) {
                 return super.confirmPayment(costPart, question, sa);
             }
             if (askingGame != getGame()) {

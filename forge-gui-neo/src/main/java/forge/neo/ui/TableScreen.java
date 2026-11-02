@@ -80,8 +80,8 @@ public class TableScreen extends Pane {
 
     private final Button menuButton = new Button(NeoText.get("table.menu"));
 
-    private final Button macroRecordButton = new Button(NeoText.get("macro.record"));
-    private final Button macroPlayButton = new Button(NeoText.get("macro.play"));
+    
+    
 
     private final ImageCooldownBadge cooldownBadge = new ImageCooldownBadge();
 
@@ -237,14 +237,8 @@ public class TableScreen extends Pane {
         promptBanner = new PromptBanner(cardWidth * 1.55);
         turnBanner = new TurnBanner();
         logButton.getStyleClass().add("log-button");
-        for (final Button b : List.of(macroRecordButton, macroPlayButton)) {
-            b.getStyleClass().addAll("log-button", "macro-button");
-            
-            b.setFocusTraversable(false);
-        }
+        
 
-        macroRecordButton.setVisible(false);
-        macroPlayButton.setVisible(false);
         
         chatButton.getStyleClass().add("log-button");
         turnButton.getStyleClass().add("log-button");
@@ -304,8 +298,8 @@ public class TableScreen extends Pane {
         spotlight.setFill(javafx.scene.paint.Color.TRANSPARENT);
 
         getChildren().addAll(opponentTabs, opponentBar, viewport,
-                selfBar, hand, commandZone, phaseRail, side, combatOverlay, impactLayer, logButton, turnButton, menuButton, chatButton, macroRecordButton, macroPlayButton, cooldownBadge,
-                stackChip, promptBanner, notices, turnBanner, coinFlip, diceRoll, playerDetails, zoomBadge, macroBadge, spotlight,
+                selfBar, hand, commandZone, phaseRail, side, combatOverlay, impactLayer, logButton, turnButton, menuButton, chatButton, cooldownBadge,
+                stackChip, promptBanner, notices, turnBanner, coinFlip, diceRoll, playerDetails, zoomBadge, spotlight,
                 handPeek, overlay, menuOverlay, zoomOverlay, curtain);
         curtain.getStyleClass().add("hotseat-curtain");
 
@@ -501,8 +495,7 @@ public class TableScreen extends Pane {
         logButton.resizeRelocate(PAD, h - lbH - PAD, lbW, lbH);
 
         double cornerTop = h - lbH - PAD;
-        double mbW = Math.max(Math.max(lbW, chatButton.prefWidth(-1)),
-                Math.max(macroRecordButton.prefWidth(-1), macroPlayButton.prefWidth(-1)));
+        double mbW = Math.max(lbW, chatButton.prefWidth(-1));
         if (turnButton.isVisible()) {
             mbW = Math.max(mbW, turnButton.prefWidth(-1));
         }
@@ -510,7 +503,7 @@ public class TableScreen extends Pane {
         if (menuButton.isVisible()) {
             mbW = Math.max(mbW, menuButton.prefWidth(-1));
         }
-        for (final Button b : List.of(turnButton, menuButton, chatButton, macroRecordButton, macroPlayButton)) {
+        for (final Button b : List.of(turnButton, menuButton, chatButton)) {
             if (b.isVisible()) {
                 final double bh = b.prefHeight(mbW);
                 cornerTop -= bh + 4;
@@ -647,13 +640,7 @@ public class TableScreen extends Pane {
             zoomBadge.resizeRelocate(PAD, boardTop + PAD, bw, bh);
         }
 
-        if (macroBadge.isVisible()) {
-            final double mw = macroBadge.prefWidth(-1);
-            final double mh = macroBadge.prefHeight(mw);
-            final double my = boardTop + PAD
-                    + (zoomBadge.isVisible() ? zoomBadge.prefHeight(-1) + 6 : 0);
-            macroBadge.resizeRelocate(PAD, my, mw, mh);
-        }
+        
 
         if (notices.hasNotices()) {
             final double nw = Math.min(380, Math.max(220, contentW * 0.34));
@@ -808,39 +795,19 @@ public class TableScreen extends Pane {
 
     private final NoticeStack notices = new NoticeStack();
 
-    private final javafx.scene.control.Label macroBadge = macroBadge();
+    
 
-    private static javafx.scene.control.Label macroBadge() {
-        final javafx.scene.control.Label l = new javafx.scene.control.Label(NeoText.get("macro.badge"));
-        l.getStyleClass().add("macro-badge");
-        l.setMouseTransparent(true);
-        l.setVisible(false);
-        l.setManaged(false);
-        return l;
-    }
+    
 
-    public void setMacroRecording(final boolean on) {
-        setMacroState(on, macroPlayButton.isVisible() || on);
-    }
+    
 
-    public void setMacroState(final boolean recording, final boolean hasMacro) {
-        macroBadge.setVisible(recording);
-        macroRecordButton.setText(NeoText.get(recording ? "macro.stop" : "macro.record"));
-        macroRecordButton.pseudoClassStateChanged(RECORDING, recording);
-        macroPlayButton.setVisible(hasMacro && !recording);
-        requestLayout();
-    }
+    
 
-    public Button getMacroRecordButton() {
-        return macroRecordButton;
-    }
+    
 
-    public Button getMacroPlayButton() {
-        return macroPlayButton;
-    }
+    
 
-    private static final javafx.css.PseudoClass RECORDING =
-            javafx.css.PseudoClass.getPseudoClass("recording");
+    
 
     public void showNotice(final String text) {
         notices.push(text);

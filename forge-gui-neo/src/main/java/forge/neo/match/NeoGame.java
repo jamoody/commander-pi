@@ -155,10 +155,10 @@ public final class NeoGame {
 
         if (mode == NeoMatchUI.Mode.HUMAN) {
             applyEnginePrefs();
-        } else if (mode == NeoMatchUI.Mode.OBSERVE && binder == null) {
-
-            FModel.getPreferences().setPref(FPref.MATCH_AI_TIMEOUT, "2");
         }
+
+        // Never attach the engine replay recorder, including with old saved preferences.
+        FModel.getPreferences().setPref(FPref.UI_RECORD_REPLAYS, false);
 
         final NeoMatchUI gui = new NeoMatchUI(mode, verbose);
         gui.setAutoPayMana(autoPayMana);
@@ -183,15 +183,15 @@ public final class NeoGame {
         final int seats = opponents + 1;
 
         forge.neo.look.NeoLook.setDeckInPlay(
-                mode == NeoMatchUI.Mode.OBSERVE ? null : deck);
-        if (mode != NeoMatchUI.Mode.OBSERVE) {
+                deck);
+        {
             humanSeat = seating == null ? format.register(deck, seats)
                     : seating.human(deck, seats);
             humanSeat.setPlayer(forge.neo.look.NeoPlayers.human());
             players.add(humanSeat);
         }
 
-        final int aiCount = mode == NeoMatchUI.Mode.OBSERVE ? opponents + 1 : opponents;
+        final int aiCount = opponents;
         
         forge.neo.look.NeoPlayers.newMatch();
 
@@ -242,12 +242,7 @@ public final class NeoGame {
 
         applyNeoRules(rules);
 
-        if (mode == NeoMatchUI.Mode.OBSERVE) {
-
-            NeoGuiBase.setGuiGameFactory(() -> gui);
-            
-            match.startMatch(rules, null, players, (RegisteredPlayer) null, (IGuiGame) null);
-        } else if (!hotSeats.isEmpty()) {
+        if (!hotSeats.isEmpty()) {
 
             final java.util.Map<RegisteredPlayer, IGuiGame> guis = new java.util.LinkedHashMap<>();
             guis.put(humanSeat, gui);
@@ -496,7 +491,7 @@ public final class NeoGame {
         final ForgePreferences prefs = FModel.getPreferences();
         prefs.setPref(FPref.YIELD_AUTO_PASS_NO_ACTIONS, NeoSettings.getBool(NeoSettings.AUTO_PASS, true));
 
-        prefs.setPref(FPref.UI_RECORD_REPLAYS, NeoSettings.recordReplays());
+        prefs.setPref(FPref.UI_RECORD_REPLAYS, false);
 
         NeoSettings.applyAudioToEngine();
         prefs.setPref(FPref.UI_SHOW_ACTIONABLE_HIGHLIGHTS, true);

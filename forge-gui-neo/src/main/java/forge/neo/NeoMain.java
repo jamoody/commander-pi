@@ -62,9 +62,6 @@ public final class NeoMain {
             case "play":
                 runGame(deckName, opponents, NeoMatchUI.Mode.AUTO_PLAY, timeout, verbose);
                 break;
-            case "watch":
-                runGame(deckName, opponents, NeoMatchUI.Mode.OBSERVE, timeout, verbose);
-                break;
             case "ui":
                 banner("PHASE 2 - JavaFX interface");
 
@@ -82,7 +79,7 @@ public final class NeoMain {
             default:
                 listDecks();
                 System.out.println();
-                System.out.println("  Comandos: play | watch     (--deck=nombre --opponents=N --timeout=S -v)");
+                System.out.println("  Comandos: play     (--deck=nombre --opponents=N --timeout=S -v)");
                 break;
         }
 

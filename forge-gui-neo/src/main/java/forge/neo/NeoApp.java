@@ -44,7 +44,7 @@ public class NeoApp extends Application implements SettingsPanel.Host {
     private Deck lastDeck;
     private int lastOpponents;
     private String lastAi;
-    private boolean lastWatch;
+    
     List<Deck> lastOpponentDecks;
     
     int[] lastTeams;
@@ -275,7 +275,7 @@ public class NeoApp extends Application implements SettingsPanel.Host {
             lastDeck = deck;
             showTable();
             startLiveGame(deck, Integer.parseInt(orDefault(optionOf(args, "--opponents"), "3")),
-                args.contains("--watch") ? NeoMatchUI.Mode.OBSERVE : NeoMatchUI.Mode.HUMAN,
+                NeoMatchUI.Mode.HUMAN,
                 Integer.parseInt(orDefault(optionOf(args, "--timeout"), "86400")), false, null, true);
         } else showMainMenu();
         showImportResult();
@@ -338,9 +338,7 @@ public class NeoApp extends Application implements SettingsPanel.Host {
         }, this, false, false, true);
 
         final forge.neo.match.NeoMatchUI shown = binder == null ? null : binder.getMatchUi();
-        if (shown != null && shown.isReplay()) {
-            menu.asReplay();
-        }
+        
         menu.setGestureSpy(table::gesture);
         table.getMenuOverlay().show(menu);
         if (countGesture) {
@@ -473,12 +471,6 @@ public class NeoApp extends Application implements SettingsPanel.Host {
                 }
                 openPauseMenu(false).askQuit();
                 return true;
-            case MACRO_RECORD:
-                return free && ui != null && ui.pressMacroRecord();
-            case MACRO_PLAY:
-                return free && ui != null && ui.pressMacroPlay();
-            case MACRO_NEXT:
-                return free && ui != null && ui.nextMacroAction();
             case SHOW_SHORTCUTS:
                 if (table.getMenuOverlay().isShowing()) {
                     return false;
@@ -760,7 +752,6 @@ public class NeoApp extends Application implements SettingsPanel.Host {
             public void play(final NeoFormat format) { showHome(NeoFormat.COMMANDER); }
             public void library() { showLibrary(); }
             public void look() { showLook(); }
-            public void replays() { showReplays(); }
             public void settings() { showMenuSettings(); }
             public void quit() { Platform.exit(); }
         }));
@@ -772,84 +763,9 @@ public class NeoApp extends Application implements SettingsPanel.Host {
         applyScale();
     }
 
-    void showReplays() {
-        scene.setRoot(new forge.neo.ui.ReplaysScreen(this::playReplay, this::showMainMenu));
-        applyScale();
-    }
+    
 
-    private void playReplay(final java.io.File file) {
-        if (forge.gamemodes.net.client.ReplayPlayer.isPlaying()) {
-            return;
-        }
-        final TableScreen oldTable = table;
-        final TableBinder oldBinder = binder;
-        table = new TableScreen(cardWidth, sideWidth);
-        table.getDetailPanel().setTextZoom(NeoSettings.getDouble(NeoSettings.TEXT_ZOOM, 1.15));
-        final TableBinder b = new TableBinder(table);
-        binder = b;
-
-        final NeoMatchUI gui = new NeoMatchUI(NeoMatchUI.Mode.HUMAN, false);
-        gui.setBinder(b);
-        gui.setTable(table);
-        gui.setEnding(NeoMatchUI.Ending.REPLAY);
-        b.setMatchUi(gui);
-        gui.setOnOpened(() -> {
-            Platform.runLater(this::showTable);
-
-            if (Boolean.getBoolean("neo.replay.fast")) {
-                final Thread t = new Thread(() -> {
-                    try {
-                        Thread.sleep(1500);
-                    } catch (final InterruptedException e) {
-                        return;
-                    }
-                    for (int i = 0; i < 3; i++) {
-                        Platform.runLater(() -> gui.getGameController().selectButtonCancel());
-                    }
-
-                    for (int i = 0; i < 150; i++) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (final InterruptedException e) {
-                            return;
-                        }
-                        final boolean[] done = {false};
-                        final java.util.concurrent.CountDownLatch l = new java.util.concurrent.CountDownLatch(1);
-                        Platform.runLater(() -> {
-                            final javafx.scene.Node over = scene.getRoot().lookup(".game-over .btn-primary");
-                            if (over instanceof javafx.scene.control.Button b2) {
-                                System.out.println("[neo] replay test: pressing " + b2.getText());
-                                b2.fire();
-                                done[0] = true;
-                            }
-                            l.countDown();
-                        });
-                        try {
-                            l.await();
-                        } catch (final InterruptedException e) {
-                            return;
-                        }
-                        if (done[0]) {
-                            return;
-                        }
-                    }
-                }, "neo-replay-fast");
-                t.setDaemon(true);
-                t.start();
-            }
-        });
-        gui.setOnClosed(() -> Platform.runLater(this::showReplays));
-        try {
-            System.out.println("[neo] Replay: " + file.getName());
-            forge.gamemodes.net.client.ReplayPlayer.play(file, gui);
-        } catch (final java.io.IOException | RuntimeException e) {
-            System.out.println("[neo] Could not open the replay " + file.getName() + ": " + e);
-            
-            table = oldTable;
-            binder = oldBinder;
-            forge.neo.ui.Toast.show(NeoText.get("replays.broken"));
-        }
-    }
+    
 
     private void showMenuSettings() {
         if (settingsOverlay != null) {
@@ -1057,12 +973,11 @@ public class NeoApp extends Application implements SettingsPanel.Host {
     }
 
     private void startFromHome(final Deck deck, final int opponents,
-                               final String aiProfile, final boolean watch,
+                               final String aiProfile,
                                final List<Deck> opponentDecks, final int[] teams) {
         lastDeck = deck;
         lastOpponents = opponents;
         lastAi = aiProfile;
-        lastWatch = watch;
         lastOpponentDecks = opponentDecks;
         lastTeams = teams;
 
@@ -1070,7 +985,7 @@ public class NeoApp extends Application implements SettingsPanel.Host {
         table.getDetailPanel().setTextZoom(NeoSettings.getDouble(NeoSettings.TEXT_ZOOM, 1.15));
         showTable();
         startLiveGame(deck, opponents,
-                watch ? NeoMatchUI.Mode.OBSERVE : NeoMatchUI.Mode.HUMAN,
+                NeoMatchUI.Mode.HUMAN,
                 (int) java.util.concurrent.TimeUnit.DAYS.toSeconds(1),
 
                 false, forge.neo.look.RivalSetup.perRival(aiProfile), true);
@@ -1128,7 +1043,7 @@ public class NeoApp extends Application implements SettingsPanel.Host {
                         binder = null;
                         if (decided == NeoMatchUI.Exit.RESTART && lastDeck != null) {
 
-                            startFromHome(lastDeck, lastOpponents, lastAi, lastWatch,
+                            startFromHome(lastDeck, lastOpponents, lastAi,
                                     lastOpponentDecks, lastTeams);
                         } else {
                             showHome();

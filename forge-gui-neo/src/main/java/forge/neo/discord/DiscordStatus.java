@@ -170,9 +170,7 @@ public final class DiscordStatus {
             // En red no se dice contra cuantos ni contra quien.
             return NeoText.get("discord.game.net", format);
         }
-        if (seats <= 0) {
-            return NeoText.get("discord.game.watch", format);
-        }
+        
         if (opponents == 1) {
             return NeoText.get("discord.game.vs1", format);
         }

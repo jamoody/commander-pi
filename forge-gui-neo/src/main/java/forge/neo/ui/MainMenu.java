@@ -25,8 +25,7 @@ public class MainMenu extends BorderPane {
 
         void look();
 
-        default void replays() {
-        }
+        
 
         void settings();
 
@@ -125,9 +124,8 @@ public class MainMenu extends BorderPane {
         settings.getStyleClass().add("btn-secondary");
         settings.setOnAction(e -> actions.settings());
 
-        final Button replays = new Button(NeoText.get("menu.replays"));
-        replays.getStyleClass().add("btn-secondary");
-        replays.setOnAction(e -> actions.replays());
+        
+        
 
         final Button quit = new Button(NeoText.get("common.quit"));
         quit.getStyleClass().add("btn-secondary");
@@ -165,7 +163,7 @@ public class MainMenu extends BorderPane {
             MenuLayout.reset();
             relayout();
         });
-        footer.getChildren().addAll(gap, resetButton, editButton, replays, settings, quit);
+        footer.getChildren().addAll(gap, resetButton, editButton, settings, quit);
         footer.getStyleClass().add("home-footer");
         footer.setPadding(new Insets(12, 30, 16, 30));
         footer.setAlignment(Pos.CENTER_RIGHT);

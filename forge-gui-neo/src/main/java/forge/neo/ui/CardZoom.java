@@ -1077,26 +1077,7 @@ public final class CardZoom {
      *
      * @return null si la carta tiene una sola cara
      */
-    /**
-     * Quien somos "nosotros" en la partida abierta ahora mismo.
-     *
-     * <p>Existe por UNA cosa: {@code Card.getAlternateState()} devuelve la cara
-     * de VERDAD de una carta boca abajo (morfo, manifestado) sin mirar quien
-     * pregunta — es asi para que TU propio morfo se pueda leer con el click
-     * derecho, pero sin este guardia el mismo camino ensenyaria el morfo DEL
-     * RIVAL, que es justo la informacion que el juego esconde. La comprobacion
-     * de verdad la hace el motor ({@code CardView.canFaceDownBeShownToAny},
-     * la MISMA que usa {@code AbstractGuiGame} para decidir que arte mandar);
-     * aqui solo hace falta pasarle quien mira. Se pone al abrir cada partida
-     * ({@code NeoMatchUI.openView}, principio 8 de las notas de diseño) y por eso
-     * vale para las cuatro formas de arrancar una: menu, aventura, partida
-     * privada y los caminos de prueba.
-     *
-     * <p>En observador ({@code Mode.OBSERVE}, sin asiento propio) queda
-     * vacio, y {@code canFaceDownBeShownToAny(vacio)} devuelve {@code true}
-     * (mismo criterio del motor): mirar sin jugar SI ensenya los boca abajo,
-     * que es justo lo que hace falta para verificar con capturas.
-     */
+    
     private static volatile Iterable<PlayerView> localViewers = java.util.Collections.emptyList();
 
     public static void setLocalViewers(final Iterable<PlayerView> viewers) {

@@ -282,43 +282,7 @@ public final class ModeArt {
     
 
     
-    private static void replay(final Pen t, final Shape shape) {
-        t.g.beginPath();
-        if (!(shape instanceof javafx.scene.shape.Path path)) {
-            return;
-        }
-        t.g.setFillRule(path.getFillRule());
-        double x = 0;
-        double y = 0;
-        final List<PathElement> elements = new ArrayList<>(path.getElements());
-        for (final PathElement e : elements) {
-            if (e instanceof MoveTo m) {
-                x = m.getX();
-                y = m.getY();
-                t.g.moveTo(x, y);
-            } else if (e instanceof LineTo l) {
-                x = l.getX();
-                y = l.getY();
-                t.g.lineTo(x, y);
-            } else if (e instanceof HLineTo h) {
-                x = h.getX();
-                t.g.lineTo(x, y);
-            } else if (e instanceof VLineTo v) {
-                y = v.getY();
-                t.g.lineTo(x, y);
-            } else if (e instanceof CubicCurveTo c) {
-                x = c.getX();
-                y = c.getY();
-                t.g.bezierCurveTo(c.getControlX1(), c.getControlY1(), c.getControlX2(), c.getControlY2(), x, y);
-            } else if (e instanceof QuadCurveTo q) {
-                x = q.getX();
-                y = q.getY();
-                t.g.quadraticCurveTo(q.getControlX(), q.getControlY(), x, y);
-            } else if (e instanceof ClosePath) {
-                t.g.closePath();
-            }
-        }
-    }
+    
 
     
     

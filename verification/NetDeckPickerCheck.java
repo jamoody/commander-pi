@@ -37,7 +37,7 @@ public final class NetDeckPickerCheck {
         Platform.startup(() -> {
             try {
                 HomeScreen home = new HomeScreen(NeoFormat.COMMANDER, new ArrayList<>(stock), 180,
-                        (deck, opponents, ai, watch, rivals, teams) -> {}, () -> {}, (deck, where) -> {}, () -> {});
+                        (deck, opponents, ai, rivals, teams) -> {}, () -> {}, (deck, where) -> {}, () -> {});
                 // Simulate an already downloaded cache without network or personal deck data.
                 List<Deck> net = (List<Deck>) field(home, "net");
                 net.clear();

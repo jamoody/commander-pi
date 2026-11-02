@@ -49,9 +49,8 @@ public final class CommanderSmoke {
                         var gv = ui.getGameView();
                         if (gv != null && gv.getPlayers() != null && gv.getPlayers().size() == 4
                                 && ui.getGameController() instanceof forge.player.PlayerControllerHuman human
-                                && human.getInputQueue().getInput() instanceof forge.gamemodes.match.input.InputPlaybackControl) {
+                                && ui.getLocalPlayers().size() == 1) {
                             fourSeats.set(true);
-                            forge.gui.FThreads.invokeInEdtNowOrLater(() -> ui.getGameController().selectButtonCancel());
                             System.out.println("PASS: live Commander game has four seats");
                             return;
                         }
@@ -61,7 +60,7 @@ public final class CommanderSmoke {
                 }, "commander-smoke-probe");
                 probe.setDaemon(true);probe.start();
             });
-            var result = NeoGame.play(deck, 3, NeoMatchUI.Mode.OBSERVE, 180, false,
+            var result = NeoGame.play(deck, 3, NeoMatchUI.Mode.AUTO_PLAY, 180, false,
                     null, null, true, NeoFormat.COMMANDER, opponents);
             check(fourSeats.get(), "four seats observed in live game state");
             check(result.turns > 1, "four-player game advances turns: " + result.turns);
