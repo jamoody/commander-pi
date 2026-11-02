@@ -10,7 +10,13 @@ The baseline compiled successfully with JDK 17 and Maven 3.9. A separate integra
 
 ## Build
 
-Use JDK 17 and Maven 3.9. Clone Forge at the revision in `upstream.json` into a separate directory, copy this repository's `forge-gui-neo` directory into it, and add `<module>forge-gui-neo</module>` to the root POM's `<modules>` section. From the Forge root run:
+Use JDK 17 and Maven 3.9. Clone Forge at the revision in `upstream.json` into a separate directory, copy this repository's `forge-gui-neo` directory into it, and add `<module>forge-gui-neo</module>` to the root POM's `<modules>` section. Before compiling, apply the version-checked engine fixes from this repository root:
+
+```sh
+python scripts/apply_engine_overrides.py --forge <forge-directory>
+```
+
+Then, from the Forge root run:
 
 ```sh
 mvn -B package -Dmaven.test.skip=true -Dcheckstyle.skip=true -pl forge-gui-neo -am
@@ -33,3 +39,16 @@ Original notices and GPLv3 license are preserved in `LICENSE` and `AVISOS.txt`. 
 Exclude Adventure, Conquest, cube, Draft, puzzles, Sealed, and tutorial resources. Keep `res/quest/commanderprecons`, and only `Commander.dat` under `res/deckgendecks`. Keep every card and token script plus shared art, fonts, audio, AI and metadata. Shared format metadata in the rules engine remains necessary even though those formats are not exposed as playable modes.
 
 Build outputs, personal game profiles, caches, downloaded tools and credentials are not included.
+
+## Archidekt import regression
+
+Only the first (primary/active) category controls inclusion and Commander/Sideboard placement. Secondary Maybeboard and Sideboard tags no longer remove main-deck cards. Active excluded categories still stay excluded, and companion handling is preserved. See [Archidekt category semantics](https://archidekt.com/news/660198).
+
+From this repository root, against a built Windows package:
+
+```powershell
+javac -encoding UTF-8 -cp "<package>/app/*" -d .build/checks verification/ArchidektImportCheck.java
+java -cp ".build/checks;<package>/app/*" forge.deck.ArchidektImportCheck
+```
+
+The 16 offline regression cases require no network or card database. The check can also take an Archidekt API JSON snapshot path and an output text path as two additional arguments. A local snapshot of the reported deck verified 99 main-deck cards plus one commander after the fix; the old importer dropped five cards and moved eight more to Sideboard. Personal deck snapshots are not committed.

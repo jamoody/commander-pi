@@ -1,0 +1,9 @@
+{
+  "forgeRevision": "875333b7b78af0da19bf6f297ecde26484c9f2ec",
+  "files": {
+    "forge-gui/src/main/java/forge/deck/ArchidektDeckUrlProvider.java": {
+      "originalSha256": "6812afffbca9237e388f6af1697b3b00be0dc6228cd4465d40411621b2a75caf",
+      "replacementSha256": "486d733b72ae8f9cf313562339c4f98e2fa5022c1ebb0c005bdc53366beb4a73"
+    }
+  }
+}
