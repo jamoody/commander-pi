@@ -35,6 +35,7 @@ public class TableScreen extends Pane {
 
     private static final double LINE_H = 14;
     private static final double PAD = 10;
+    private static final double HAND_SIZE_FACTOR = 1.20;
 
     private final double cardWidth;
     private final double sideWidth;
@@ -176,7 +177,7 @@ public class TableScreen extends Pane {
             }
         });
         this.sideWidth = sideWidth;
-        this.hand = new HandFan(cardWidth * 1.12);
+        this.hand = new HandFan(cardWidth * 1.12 * HAND_SIZE_FACTOR);
         this.handPeek = new CardNode(cardWidth * 2.4);
         handPeek.setHoverEnabled(false);
         handPeek.setRotationEnabled(false);
@@ -567,7 +568,7 @@ public class TableScreen extends Pane {
                 : 0;
         final double cardH = barBesideHand ? selfBar.prefHeight(cardW) : 0;
         final double selfBarH = barBesideHand ? 0 : Math.max(selfBar.prefHeight(contentW), abH);
-        double handH = Math.min(hand.prefHeight(contentW), h * 0.205);
+        double handH = Math.min(hand.prefHeight(contentW), h * 0.205 * HAND_SIZE_FACTOR);
         
         handH = Math.max(handH, cardH);
 

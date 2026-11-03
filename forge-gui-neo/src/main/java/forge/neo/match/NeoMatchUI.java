@@ -3767,7 +3767,71 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
 
             final UiDispatcher ui = uiDispatcher();
             if (ui != null) {
-                
+                ui.runLater(() -> {
+                    table.getActionBar().setButtons(shownOk, cancelLabel, okEnabled, cancelEnabled);
+                    table.getActionBar().setPlayerChoices(playerChoices);
+                    table.getActionBar().setResolveAll(resolveAll > 0
+                                    ? NeoText.get("stack.resolveAll", resolveAll) : null,
+                            NeoText.get("stack.resolveAll.tip"), this::resolveStack);
+                    table.getActionBar().setYesToAll(yesToAll > 0
+                                    ? NeoText.get("trigger.yesToAll", yesToAll) : null,
+                            NeoText.get("trigger.yesToAll.tip"), this::yesToAll);
+                    table.getActionBar().setOnOk(() -> {
+
+                        if (okAwaitingEngine()) {
+
+                            if (Boolean.getBoolean("neo.okhold.debug")) {
+                                System.out.println("[okhold] OK ignorado, el motor aun no ha vuelto"
+                                        + " a preguntar | stack vacio en la vista: " + (topOfStack() == null));
+                            }
+                            return;
+                        }
+                        
+                        if (warnNothingPicked()) {
+                            return;
+                        }
+                        
+                        if (confirmLeavingMain()) {
+                            return;
+                        }
+                        
+                        if (confirmNoBlockers()) {
+                            return;
+                        }
+                        
+                        if (confirmAutoSacrifice()) {
+                            return;
+                        }
+
+                        if (!payingMana && !isSelecting() && getSelectionMax() <= 0
+                                && isRoutinePriorityPrompt(lastPrompt)) {
+                            okSentAtGen = askGen.get();
+                            okSentAt = System.currentTimeMillis();
+                        }
+                        didDetail("pressed OK (" + shownOk + ")");
+                        respondLater(() -> getGameController().selectButtonOk());
+                    });
+                    table.getActionBar().setOnCancel(() -> {
+                        
+                        if (isEndTurnLabel(cancelLabel) && confirmEndingTurn(() -> {
+                            didDetail("pressed Cancel (" + cancelLabel + "), confirmed");
+                            respondLater(() -> getGameController().selectButtonCancel());
+                        })) {
+                            return;
+                        }
+                        didDetail("pressed Cancel (" + cancelLabel + ")");
+                        respondLater(() -> getGameController().selectButtonCancel());
+                    });
+
+                    showCentralPrompt(shownOk, cancelLabel, okEnabled, cancelEnabled);
+                    table.requestLayout();
+
+                    table.setGroupingEnabled(!isSelecting());
+                    table.setSelectable(this::isSelectable);
+
+                    table.setPlayersSelectable(true);
+
+                });
             }
             return;
         }
@@ -5556,6 +5620,13 @@ public class NeoMatchUI extends NetworkGuiGame implements OverlookedSink {
     public void message(final String message, final String title) {
         log("[%s] %s", title, message);
         if (message == null || message.isBlank()) {
+            return;
+        }
+        // Resolution results must survive the next priority prompt. Use the same
+        // acknowledged dialog path as other engine questions, preserving the source title.
+        if (forge.neo.EnginePhrase.contains(message, "lblNoValidCards") && interactive()) {
+            askCard(null, title, message.trim(),
+                    List.of(forge.util.Localizer.getInstance().getMessage("lblOK")), 0);
             return;
         }
         final forge.game.GameView gv = getGameView();

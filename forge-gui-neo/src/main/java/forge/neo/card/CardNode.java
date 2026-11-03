@@ -360,6 +360,8 @@ public class CardNode extends StackPane {
             art.setFitHeight(h);
             art.setRotate(0);
         }
+        // Resizing must not stretch a thumbnail prepared for the previous size.
+        sharpenArt();
     }
 
     public final void setCardWidth(final double w) {
@@ -511,7 +513,7 @@ public class CardNode extends StackPane {
 
         final Image current = art.getImage();
         if (sharp == null && px != null && current != null && current != full
-                && current.getWidth() >= px[0] * 0.85 && current.getWidth() <= px[0] * 1.15) {
+                && current.getWidth() >= px[0] && current.getWidth() <= px[0] * 1.15) {
             want = current;
         }
         if (art.getImage() != want) {
@@ -534,6 +536,10 @@ public class CardNode extends StackPane {
         final double own = Math.hypot(getScaleX(), 0);
         if (own > 1e-6) {
             s /= own;
+        }
+        // Prepare the final hover size once, rather than one copy per animation frame.
+        if (lifted) {
+            s *= Math.max(1, forge.neo.NeoSettings.hoverZoom());
         }
         s *= sc.getWindow().getOutputScaleX();
         int w = (int) Math.ceil(fw * s);
@@ -1315,6 +1321,7 @@ public class CardNode extends StackPane {
         stopWatching();
         lifted = true;
         liftedProp.set(true);
+        sharpenArt();
 
         setViewOrder(Math.min(baseViewOrder, 0) - 1);
         setEffect(lift);
@@ -1379,6 +1386,7 @@ public class CardNode extends StackPane {
         }
         lifted = false;
         liftedProp.set(false);
+        sharpenArt();
         setViewOrder(baseViewOrder);
         setEffect(null);
         if (!animations) {

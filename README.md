@@ -64,3 +64,28 @@ AI spectating, saved game replay/recording, and action macro recording/playback 
 A clean Maven package build passed. The packaged JAR no longer contains ReplaysScreen, ReplayText or MacroChoices. `verification/HumanCommanderCheck.java` verifies a real human plus three AI seats, 40 starting life, keeping an opening hand, reaching normal play and conceding back to the menu. It deliberately starts with the engine recording preference enabled and checks that match startup disables it. Use a disposable profile and pass a screenshot path. The net-deck picker integration check was rerun after narrowing HomeScreen's start callback. Menu, deck-selection and live-table screenshots were inspected. This pass did not rerun a full game to a natural winner; the earlier turn-39 result describes the initial baseline.
 
 The developer-only AUTO_PLAY test driver still exercises a human seat programmatically; the spectator mode and its CLI command have been removed. Core engine recording/macro interfaces shared with Forge are retained, with no user-facing entry point in this application.
+
+## Opening-hand decision buttons repaired (2026-11-02)
+
+Macro removal accidentally removed the enclosing updateButtons UI callback, disabling normal game decisions as well. Restored the callback for labels, enabled states, OK/Cancel actions, central prompts and selection updates, excluding only the obsolete macro-state call. The image readability work was not extended.
+
+Maven package build passed (suite skipped). New verification/OpeningHandButtonsCheck.java exercises actual JavaFX buttons instead of calling the engine controller directly. The previous binary failed to progress. The repaired packaged build passed direct Keep and Mulligan -> confirm zero-card bottom prompt -> Keep, reached the human turn, and returned to menu cleanly. Logs: work/opening-after-keep.log and work/opening-after-mulligan-final.log. The earlier HumanCommanderCheck did not cover button wiring and should not be used to establish UI input correctness.
+
+Windows commander.jar and local source archive updated. 
+
+## Larger hand cards (2026-11-02)
+
+TableScreen increases the nominal hand width and hand height budget by 20%, preserving fan rotation and existing small-window/scroll safeguards. The battlefield retains its minimum space. No renderer or rules changes in this pass.
+Maven package succeeded (suite skipped). Packaged UI Keep-hand check passed through the human turn and clean exit; 1280x800 table screenshot inspected. 
+
+## Acknowledged empty-result notifications (2026-11-02)
+
+NeoMatchUI.message now recognizes the localized engine lblNoValidCards result, including its formatted source/value message, and uses the existing acknowledged dialog path for human games. Source title and full result text remain visible until OK. Other information keeps its existing nonmodal behavior; engine rules are unchanged.
+
+Maven package passed (suite skipped). NoValidCardsCheck reproduced the absent dialog in the previous binary. The updated packaged binary passed background-engine and FX-thread notification tests: dialog present, source/result displayed, prompt updates do not dismiss it, caller waits, OK resumes and closes it. Routine information remains nonmodal; AUTO_PLAY does not block. Screenshot inspected. This verifies notification delivery using Winota-formatted text, not a full scripted Winota combat scenario.
+
+Windows build and local source archive refreshed. 
+
+## Stable baseline before AI experiments (2026-11-03)
+
+Includes the restored opening-hand buttons, refreshed card image scaling, 20% larger hand cards and acknowledged no-valid-cards results. CardSharpnessCheck covers resizing and hover resolution. No changes have been made to AI evaluations or Rinoa rules. AI experimentation must use a separate repository and build directory; this main repository is the stable baseline.
