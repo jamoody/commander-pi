@@ -4,6 +4,50 @@
     "forge-gui/src/main/java/forge/deck/ArchidektDeckUrlProvider.java": {
       "originalSha256": "6812afffbca9237e388f6af1697b3b00be0dc6228cd4465d40411621b2a75caf",
       "replacementSha256": "486d733b72ae8f9cf313562339c4f98e2fa5022c1ebb0c005bdc53366beb4a73"
+    },
+    "forge-ai/src/main/java/forge/ai/ComputerUtilCard.java": {
+      "originalSha256": "f881eddaf11a1fe6e7efc252cfefdf3aa6ef1837ebb3fdc8392de338c98da78d",
+      "replacementSha256": "4dd3eea658d7867d361f40505d1fd1a888aed92a40724ca2f56ff9911f97f58a"
+    },
+    "forge-ai/src/main/java/forge/ai/StrategicThreatEvaluator.java": {
+      "originalSha256": null,
+      "replacementSha256": "7987c85e896fe9fe5f8d79e4452477084ca652996fdcf9277d86fff535b4e49c"
+    },
+    "forge-ai/src/main/java/forge/ai/ability/ChangeZoneAi.java": {
+      "originalSha256": "1a9a74e1a8c80d21d3fb2ca3f1b02c92e9ac51ceebab397033987c2178dfceb4",
+      "replacementSha256": "d5da0553809934cc1eda1843352881b0be4ff56d2d17ba225ba68d2c38e7f979"
+    },
+    "forge-ai/src/main/java/forge/ai/ability/DamageDealAi.java": {
+      "originalSha256": "5be449fa864da41427db4904822b0fdccae06a7b7b099a4fe699bd3547e7ab8b",
+      "replacementSha256": "148c64d8ed2250d0253633999cf73580b25fcde4c840fc97bb2ac140b8b5d557"
+    },
+    "forge-ai/src/main/java/forge/ai/ability/DestroyAi.java": {
+      "originalSha256": "8f6ea06e1bbb7aef8c2755436d0e8a9394a2c9833c28891f845cb988c0a256ed",
+      "replacementSha256": "7ee4f8ac054ed7ffde1671f38b62b380761933cc7f2d1fb7d2c5de3a16de41ed"
+    },
+    "forge-ai/src/main/java/forge/ai/StrategicThreatSupport.java": {
+      "originalSha256": null,
+      "replacementSha256": "87ef19ed24b05c5dba42b54da2605375129de61ded13ca7d1577427f00d9d5c1"
+    },
+    "forge-ai/src/main/java/forge/ai/StrategicThreatPatterns.java": {
+      "originalSha256": null,
+      "replacementSha256": "c6ba9c84faf26624cfd4b88cf9c9f97906ec44626e51651c331aa0d5f96b1001"
+    },
+    "forge-ai/src/main/java/forge/ai/AiAttackController.java": {
+      "originalSha256": "35fd5b74fa81d551311039ffabc073c02d6e4d775f790ceaee8eb7356780860e",
+      "replacementSha256": "d7cdd7db8b5d451b40dc9e6c1a7eac95c948fc37f59cff837e45c10e5d3546ec"
+    },
+    "forge-ai/src/main/java/forge/ai/ComputerUtil.java": {
+      "originalSha256": "64c3bf14636e2751927ab7ea70cf816da8950ff4a6d993c7d7e74823e8ee191a",
+      "replacementSha256": "97f2d9ee1ae828e1986d21f14763e273e26229132d5d6f1fb7c02c0ceb301d93"
+    },
+    "forge-ai/src/main/java/forge/ai/OpponentAssessment.java": {
+      "originalSha256": null,
+      "replacementSha256": "6b5388e15bf3515e3c204290b22504ceaaa24e6a230725175da85ea8a715108c"
+    },
+    "forge-ai/src/main/java/forge/ai/ability/DiscardAi.java": {
+      "originalSha256": "08c30aad0367af5b68c7c13058ff9adc18733ee4b7b9b5d840fb2f9278a134ad",
+      "replacementSha256": "24f56f031efda7767a1c6c9db254fce8a99be40d37e22c075166094dbd8433f5"
     }
   }
 }

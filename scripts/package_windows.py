@@ -46,5 +46,6 @@ shutil.copy2(root/'AVISOS.txt',dest/'AVISOS.txt')
 app/*
 ''')
 (dest/'Start Commander.cmd').write_text('@echo off\ncd /d "%~dp0"\nstart "Commander" "runtime\\bin\\javaw.exe" @app/launch.args forge.neo.NeoMain ui\n')
+(dest/'Start Commander (Baseline AI).cmd').write_text('@echo off\ncd /d "%~dp0"\nstart "Commander - baseline AI" "runtime\\bin\\javaw.exe" @app/launch.args -Dforge.ai.disableStrategicThreat=true -Dforge.ai.disableOpponentAssessment=true forge.neo.NeoMain ui\n')
 info={'resourceFilesRetained':files,'resourceFilesOmitted':omitted,'resourceBytesOmitted':omitted_bytes,'runtimeJars':len(list(app.glob('*.jar')))}
 (dest/'package-stats.json').write_text(json.dumps(info,indent=2));print(info)

@@ -24,6 +24,9 @@ def main():
         target = root / relative
         if digest(source) != hashes["replacementSha256"]:
             raise SystemExit(f"Override checksum mismatch: {source}")
+        if hashes["originalSha256"] is None and not target.exists():
+            pending.append((source, target))
+            continue
         if not target.is_file():
             raise SystemExit(f"Missing Forge source: {target}")
         current = digest(target)
@@ -33,6 +36,7 @@ def main():
             raise SystemExit(f"Refusing to overwrite unexpected source: {target}")
         pending.append((source, target))
     for source, target in pending:
+        target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
     print(f"Applied {len(pending)} engine override(s); all overrides verified.")
 

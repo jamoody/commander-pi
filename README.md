@@ -1,5 +1,15 @@
 # Commander Pi
 
+This is the **ai-experiments** branch. It adds script-driven removal evaluation and
+shared opponent assessment, deterministic opponent selection, and bounded attack planning
+on top of the stable Commander UI. See [strategic ability evaluation](docs/strategic-threat.md)
+and [opponent assessment, verification and limits](docs/opponent-assessment.md).
+Build and run it separately from the stable main branch.
+
+The v6 packaged build passed 213 checks. Full-game balance and Raspberry Pi performance
+validation remain pending. [Saved audit and verification artifacts](verification/artifacts/README.md)
+include the full v5 coverage audit and final v6 test evidence.
+
 A Commander-only adaptation of [Neo Forge](https://github.com/AdrianLopez98/NeoForge), using the [Forge](https://github.com/Card-Forge/forge) rules engine. The intended device is a Raspberry Pi 5 with a custom controller. Current development and verification are on Windows; Linux ARM64/Pi validation is still pending.
 
 ## Current baseline
