@@ -1,5 +1,110 @@
 # Commander Pi
 
+## Start here: project handoff (updated 2026-11-06)
+
+This README is the living handoff for a new developer or Codex session. Read this section,
+the build instructions, and the linked AI design notes before changing code. Update this
+handoff after substantial work and before switching computers: record what changed,
+what was actually verified, known limitations, and the next step. Historical notes below
+and saved audit reports describe their own snapshots; this section describes current status.
+
+### Goal and working preferences
+
+- Build a dedicated four-player Commander simulator for a Raspberry Pi 5 and, later,
+  a custom controller with Commander-focused buttons. Get the software right first.
+- Develop and test on Windows for convenience; periodically validate on the physical Pi.
+  There is no validated Pi build or Pi emulation environment yet.
+- Keep Commander, Card Encyclopedia, and Customize. Remove unnecessary underlying
+  features where safe, while preserving shared code and assets Commander requires.
+- Improve usability and readability without speculative performance cuts. Measure on
+  the Pi before making further performance tradeoffs; prefer existing settings when useful.
+- Keep Forge responsible for rules and legality. Avoid unnecessary deep rules changes
+  or changing correct rules behavior merely because its presentation is awkward.
+- ChatGPT/API-driven opponents are not part of the current plan. Improve Forge's local AI;
+  the user does not want per-game API costs or dependence on Codex usage for gameplay.
+- Prefer general analysis of Forge's scripted abilities and reusable capability categories,
+  not a growing list of named-card exceptions. New sets are represented by human-authored
+  Forge card scripts; the evaluator does not interpret English card text with an LLM.
+- For opponent choice, distinguish strategic threat from combat power and the value of
+  a specific action. Do not use hand size as a generic threat bonus or random opponent
+  selection. Assess whether an attack is useful, survivable, or actually lethal.
+- Batch Git commits/uploads at milestones or when requested rather than after every small
+  change. Keep this README current locally in between; push before a computer handoff.
+
+### Branches and isolation
+
+Repository: https://github.com/jamoody/commander-pi
+
+- `main`: stable Commander UI baseline; no experimental AI evaluator.
+- `ai-experiments`: this branch, containing that UI baseline plus experimental AI changes.
+  "AI fork" in prior discussions means this branch and its separate local checkout/build.
+- Keep AI changes off `main`. Put shared UI fixes on `main` and bring those commits into
+  `ai-experiments` by merge or selective cherry-pick as appropriate. Inspect existing changes
+  first; do not replace the AI branch with the stable files or merge experiments back casually.
+- Use separate source/build directories, packaged applications and test profiles for stable
+  and experimental builds. Do not overwrite the user's running stable installation.
+
+The AI implementation, tests, documentation and audit archives were uploaded in commit
+`712ae77238919f9cafb98bebb6592cbaeab954e0`. This handoff update follows it. That upload left
+`main` unchanged at `0fbd146bffe110f72d3a6ba14e64f9a4a6e7fdd4`.
+
+### Current state and next work
+
+The Commander UI changes listed below are implemented. The AI branch now adds a general
+strategic-ability evaluator and v6 shared opponent assessment, deterministic opponent
+selection, bounded attack planning, and integrated removal/burn/discard targeting.
+These additions supplement Forge's existing evaluation of ordinary creatures; a zero
+strategic bonus does not by itself mean a creature is unrecognized or incorrectly scored.
+Coverage is not proof of good decisions. Do not pursue zero uncovered cards with increasingly
+specific rules: the next major step is real-game testing of targeting and attack decisions.
+
+The v6 packaged build passed **213 checks**. The AI reactor build passed with Checkstyle;
+upstream tests were skipped. Full-match balance, improved win rate, and Raspberry Pi
+performance remain **unverified**. The earlier completed four-player baseline game is not
+evidence that the new AI has completed full-match validation.
+
+Next steps:
+
+1. On a new machine, reconstruct a build from the pinned source using the instructions below.
+   Read the verification sources for their required launch arguments, resources and profiles.
+2. Play/test the AI build and compare its choices with the baseline comparison launcher.
+   Capture concrete board states and decisions before tuning scores or expanding scope.
+3. Continue requested UI fixes while preserving the stable/experimental branch boundary.
+4. Validate Linux ARM64 packaging, JavaFX/native dependencies, usability and speed on a real
+   Pi 5 before claiming device support or choosing further optimizations.
+
+Read [strategic-threat.md](docs/strategic-threat.md) for the general evaluator and
+[opponent-assessment.md](docs/opponent-assessment.md) for v6 integration and limitations.
+[meaningful-coverage-audit.md](docs/meaningful-coverage-audit.md) and the numbered audit notes
+explain coverage methodology. [Saved verification evidence](verification/artifacts/README.md)
+links the committed v5 and v6 ZIP snapshots. Older statements in reports about work being
+local or unpushed describe report-generation time, not the current GitHub state.
+
+### Continuing on another computer
+
+Clone the repository with `git clone --branch ai-experiments https://github.com/jamoody/commander-pi.git`
+and open that folder in Codex. Ask the new session to read this README and the linked design
+notes. GitHub carries the source and evidence, not the full conversation, installed build
+tools, downloaded Forge source, generated executables, card-image cache or personal decks
+and profiles. Rebuild or copy needed local assets separately; never commit credentials or
+personal profiles. Commit/push before leaving one computer and fetch/pull before editing
+on another. Check for local changes before synchronizing; do not discard them.
+
+On the original Windows machine, the experimental checkout is
+`C:/Users/moody/Documents/Codex/2026-10-29/do/work/commander-pi-ai` and generated packages are
+under `C:/Users/moody/Documents/Codex/2026-10-29/do/outputs/Commander-AI-Windows` and
+`Commander-Windows`. These are local reference paths, not prerequisites on a new machine.
+The repository is an overlay: obtain the pinned Forge engine separately, then apply the
+Neo UI sources and version-checked engine overrides. Do not substitute latest upstream.
+
+The Windows packager generates a baseline comparison launcher with both
+`-Dforge.ai.disableStrategicThreat=true` and `-Dforge.ai.disableOpponentAssessment=true`.
+This disables both experimental evaluators for comparison; it is not a byte-identical
+historical build. Specialist legacy AI paths still exist, and randomness has not been
+removed globally from Forge or from Magic's rules.
+
+## AI branch overview
+
 This is the **ai-experiments** branch. It adds script-driven removal evaluation and
 shared opponent assessment, deterministic opponent selection, and bounded attack planning
 on top of the stable Commander UI. See [strategic ability evaluation](docs/strategic-threat.md)
@@ -98,4 +203,4 @@ Windows build and local source archive refreshed.
 
 ## Stable baseline before AI experiments (2026-11-03)
 
-Includes the restored opening-hand buttons, refreshed card image scaling, 20% larger hand cards and acknowledged no-valid-cards results. CardSharpnessCheck covers resizing and hover resolution. No changes have been made to AI evaluations or Rinoa rules. AI experimentation must use a separate repository and build directory; this main repository is the stable baseline.
+This historical stable snapshot includes the restored opening-hand buttons, refreshed card image scaling, 20% larger hand cards and acknowledged no-valid-cards results. CardSharpnessCheck covers resizing and hover resolution. At that point no AI evaluations had changed. Rinoa's token-death behavior was investigated and left unchanged because it followed the rules. Subsequent AI work is now on `ai-experiments`, as described in the current handoff above; `main` remains the stable baseline.
